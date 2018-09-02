@@ -4,7 +4,9 @@ defmodule Foo.Repo.Migrations.CreateCredentials do
   def change do
     create table(:credentials) do
       add :email, :string
-      add :user_id, references(:users, on_delete: :nothing)
+      add :user_id, references(:users, on_delete: :delete_all),
+                null: false
+      # Cascade on delete and do not allow credentials with no user
 
       timestamps()
     end
