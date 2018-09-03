@@ -18,6 +18,9 @@ defmodule FooWeb.Router do
 
     get "/", PageController, :index
     resources "/users", UserController
+
+    resources "/sessions", SessionController, only: [:new, :create, :delete],
+                                              singleton: true
   end
 
   # Other scopes may use custom stacks.
