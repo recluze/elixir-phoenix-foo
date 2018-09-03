@@ -2,11 +2,13 @@ defmodule Foo.CMS.Page do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Foo.CMS.Author
 
   schema "pages" do
     field :body, :string
     field :title, :string
     field :views, :integer
+    belongs_to :author, Author
 
     timestamps()
   end
