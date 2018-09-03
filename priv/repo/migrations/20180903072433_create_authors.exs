@@ -6,7 +6,8 @@ defmodule Foo.Repo.Migrations.CreateAuthors do
       add :bio, :text
       add :role, :string
       add :genre, :string
-      add :user_id, references(:users, on_delete: :nothing)
+      add :user_id, references(:users, on_delete: :delete_all),
+                null: false
 
       timestamps()
     end
