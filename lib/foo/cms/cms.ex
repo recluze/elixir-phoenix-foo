@@ -6,7 +6,8 @@ defmodule Foo.CMS do
   import Ecto.Query, warn: false
   alias Foo.Repo
 
-  alias Foo.CMS.Page
+  alias Foo.CMS.{Author, Page}
+  alias Foo.Accounts
 
   @doc """
   Returns the list of pages.
@@ -55,9 +56,10 @@ defmodule Foo.CMS do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_page(attrs \\ %{}) do
+  def create_page(%Author{} = author, attrs \\ %{}) do
     %Page{}
     |> Page.changeset(attrs)
+    |> Ecto.Changeset.put_change(:author_id, author.id)
     |> Repo.insert()
   end
 
@@ -206,5 +208,20 @@ defmodule Foo.CMS do
   """
   def change_author(%Author{} = author) do
     Author.changeset(author, %{})
+  end
+
+  def ensure_author_exists(%Accounts.User{} = user) do
+    %Author{user_id: user.id}
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.unique_constraint(:user_id)
+    |> Repo.insert()
+    |> handle_existing_author()
+  end
+
+  # If insertion went well, we're good.
+  # If we got a unique constraint error, we just use the old id!
+  defp handle_existing_author({:ok, author}), do: author
+  defp handle_existing_author({:error, changeset}) do
+    Repo.get_by!(Author, user_id: changeset.data.user_id)
   end
 end
