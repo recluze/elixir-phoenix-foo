@@ -8,4 +8,5 @@ defmodule Foo.Repo.Migrations.AddAuthorIdToPages do
     end
 
     create index(:pages, [:author_id])
+  end
 end
