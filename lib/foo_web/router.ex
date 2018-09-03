@@ -23,7 +23,7 @@ defmodule FooWeb.Router do
                                               singleton: true
   end
 
-  scope "/cms", HelloWeb.CMS, as: :cms do
+  scope "/cms", FooWeb.CMS, as: :cms do
     pipe_through [:browser, :authenticate_user]
 
     resources "/pages", PageController
