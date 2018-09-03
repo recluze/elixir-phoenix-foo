@@ -1,7 +1,7 @@
-defmodule HelloWeb.SessionController do
+defmodule FooWeb.SessionController do
   use FooWeb, :controller
 
-  alias Hello.Accounts
+  alias Foo.Accounts
 
   def new(conn, _) do
     render(conn, "new.html")
