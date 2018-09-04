@@ -4,6 +4,11 @@ defmodule FooWeb.CMS.PageController do
   alias Foo.CMS
   alias Foo.CMS.Page
 
+  plug :require_existing_author
+  plug :authorize_page when action in [:edit, :update, :delete]
+
+
+
   def index(conn, _params) do
     pages = CMS.list_pages()
     render(conn, "index.html", pages: pages)
@@ -56,5 +61,23 @@ defmodule FooWeb.CMS.PageController do
     conn
     |> put_flash(:info, "Page deleted successfully.")
     |> redirect(to: cms_page_path(conn, :index))
+  end
+
+  defp require_existing_author(conn, _) do
+    author = CMS.ensure_author_exists(conn.assigns.current_user)
+    assign(conn, :current_author, author)
+  end
+
+  defp authorize_page(conn, _) do
+    page = CMS.get_page!(conn.params["id"])
+
+    if conn.assigns.current_author.id == page.author_id do
+      assign(conn, :page, page)
+    else
+      conn
+      |> put_flash(:error, "You can't modify that page")
+      |> redirect(to: cms_page_path(conn, :index))
+      |> halt()
+    end
   end
 end
