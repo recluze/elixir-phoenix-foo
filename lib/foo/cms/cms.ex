@@ -224,4 +224,14 @@ defmodule Foo.CMS do
   defp handle_existing_author({:error, changeset}) do
     Repo.get_by!(Author, user_id: changeset.data.user_id)
   end
+
+
+  def inc_page_views(%Page{} = page) do
+    {1, [%Page{views: views}]} =
+      Repo.update_all(
+        from(p in Page, where: p.id == ^page.id),
+        [inc: [views: 1]], returning: [:views]
+      )
+      put_in(page.views, views)
+  end
 end
